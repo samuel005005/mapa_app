@@ -35,6 +35,7 @@ class _MapaPageState extends State<MapaPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           BtnUbicacion(),
+          BtnMiRuta(),
         ],
       ),
     );

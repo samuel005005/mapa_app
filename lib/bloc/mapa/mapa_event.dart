@@ -10,3 +10,5 @@ class OnLocationUpdate extends MapaEvent {
 
   OnLocationUpdate(this.ubicacion);
 }
+
+class OnShowRoute extends MapaEvent {}

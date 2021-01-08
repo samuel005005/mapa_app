@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
@@ -17,8 +18,11 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
   GoogleMapController _mapController;
 
   //Polylines
-  Polyline _miRuta =
-      new Polyline(polylineId: PolylineId('miRuta'), width: 4, points: []);
+  Polyline _miRuta = new Polyline(
+      polylineId: PolylineId('miRuta'),
+      width: 4,
+      color: Colors.black87,
+      points: []);
 
   void initMap(GoogleMapController controller) {
     if (!state.mapaReady) {
@@ -41,13 +45,33 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
     if (event is OnMapReady) {
       yield state.copyWith(mapaReady: true);
     } else if (event is OnLocationUpdate) {
-      List<LatLng> points = [..._miRuta.points, event.ubicacion];
-      this._miRuta = this._miRuta.copyWith(pointsParam: points);
-
-      final currentPolylines = state.polylines;
-      currentPolylines['miRuta'] = this._miRuta;
-
-      yield state.copyWith(polylines: currentPolylines);
+      yield* this._onLocationUpdate(event);
+    } else if (event is OnShowRoute) {
+      yield* this._onShowRoute(event);
     }
+  }
+
+  Stream<MapaState> _onLocationUpdate(OnLocationUpdate event) async* {
+    final List<LatLng> points = [..._miRuta.points, event.ubicacion];
+    this._miRuta = this._miRuta.copyWith(pointsParam: points);
+
+    final currentPolylines = state.polylines;
+    currentPolylines['miRuta'] = this._miRuta;
+
+    yield state.copyWith(polylines: currentPolylines);
+  }
+
+  Stream<MapaState> _onShowRoute(OnShowRoute event) async* {
+    if (!state.dibujarRecorrido) {
+      this._miRuta = this._miRuta.copyWith(colorParam: Colors.black87);
+    } else {
+      this._miRuta = this._miRuta.copyWith(colorParam: Colors.transparent);
+    }
+
+    final currentPolylines = state.polylines;
+    currentPolylines['miRuta'] = this._miRuta;
+
+    yield state.copyWith(
+        polylines: currentPolylines, dibujarRecorrido: !state.dibujarRecorrido);
   }
 }
