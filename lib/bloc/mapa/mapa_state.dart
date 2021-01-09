@@ -4,6 +4,8 @@ part of 'mapa_bloc.dart';
 class MapaState {
   final bool mapaReady;
   final bool dibujarRecorrido;
+  final bool seguirUbicacion;
+  final LatLng ubicacionCentral;
 
   // PolyLines
 
@@ -11,16 +13,22 @@ class MapaState {
 
   MapaState(
       {this.mapaReady = false,
-      this.dibujarRecorrido = true,
+      this.dibujarRecorrido = false,
+      this.seguirUbicacion = false,
+      this.ubicacionCentral,
       Map<String, Polyline> polylines})
       : this.polylines = polylines ?? new Map();
 
   MapaState copyWith(
           {bool mapaReady,
           bool dibujarRecorrido,
-          Map<String, Polyline> polylines}) =>
+          bool seguirUbicacion,
+          Map<String, Polyline> polylines,
+          LatLng ubicacionCentral}) =>
       new MapaState(
           mapaReady: mapaReady ?? this.mapaReady,
           dibujarRecorrido: dibujarRecorrido ?? this.dibujarRecorrido,
+          seguirUbicacion: seguirUbicacion ?? this.seguirUbicacion,
+          ubicacionCentral: ubicacionCentral ?? this.ubicacionCentral,
           polylines: polylines ?? this.polylines);
 }
