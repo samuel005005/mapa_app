@@ -92,7 +92,6 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
   }
 
   Stream<MapaState> _onSeguirUbicacion(OnSeguirUbicacion event) async* {
-    print(event);
     yield state.copyWith(seguirUbicacion: !state.seguirUbicacion);
   }
 
