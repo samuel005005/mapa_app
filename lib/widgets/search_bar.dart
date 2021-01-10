@@ -23,8 +23,11 @@ class SearchBar extends StatelessWidget {
         width: size.width,
         child: GestureDetector(
           onTap: () async {
-            final resultado =
-                await showSearch(context: context, delegate: SearchDestino());
+            final resultado = await showSearch(
+                context: context,
+                delegate: SearchDestino(
+                    proximidad:
+                        context.read<MiUbicacionBloc>().state.ubicacion));
             retornoBusqueda(context, resultado);
           },
           child: Container(
@@ -52,11 +55,32 @@ class SearchBar extends StatelessWidget {
     );
   }
 
-  void retornoBusqueda(BuildContext context, SearchResult result) {
+  Future<void> retornoBusqueda(
+      BuildContext context, SearchResult result) async {
     if (result.canceled) return;
     if (result.manualUbication) {
       BlocProvider.of<SearchBloc>(context).add(OnActivarMarcadorManual());
       return;
     }
+    calculandoAlerta(context);
+    final trafficService = new TrafficService();
+    final begin = BlocProvider.of<MiUbicacionBloc>(context).state.ubicacion;
+    final end = result.positionDestination;
+    final drivingTraffic = await trafficService.getCoordsBeginEnd(begin, end);
+    final geometry = drivingTraffic.routes[0].geometry;
+    final duration = drivingTraffic.routes[0].duration;
+    final distance = drivingTraffic.routes[0].distance;
+
+    final List<LatLng> points =
+        Poly.Polyline.Decode(encodedString: geometry, precision: 6)
+            .decodedCoords
+            .map((point) {
+      return LatLng(point[0], point[1]);
+    }).toList();
+
+    context.read<MapaBloc>().add(OnCreateRouteBeginEnd(
+        rutaCoordenadas: points, distancia: distance, duracion: duration));
+
+    Navigator.of(context).pop();
   }
 }

@@ -68,11 +68,36 @@ class _BuildMardadorManual extends StatelessWidget {
           elevation: 0,
           splashColor: Colors.transparent,
           minWidth: width - 120,
-          onPressed: () {},
+          onPressed: () {
+            calculandoAlerta(context);
+            this.calcularDestino(context);
+          },
         ),
       ),
       bottom: 70,
       left: 40,
     );
+  }
+
+  void calcularDestino(BuildContext context) async {
+    final trafficService = new TrafficService();
+    final begin = context.read<MiUbicacionBloc>().state.ubicacion;
+    final end = context.read<MapaBloc>().state.ubicacionCentral;
+    final trafficResponse = await trafficService.getCoordsBeginEnd(begin, end);
+    final geometry = trafficResponse.routes[0].geometry;
+    final duration = trafficResponse.routes[0].duration;
+    final distance = trafficResponse.routes[0].distance;
+    //Decodifcar los puntos geometries polyline6
+    final List<LatLng> points =
+        Poly.Polyline.Decode(encodedString: geometry, precision: 6)
+            .decodedCoords
+            .map((point) {
+      return LatLng(point[0], point[1]);
+    }).toList();
+
+    context.read<MapaBloc>().add(OnCreateRouteBeginEnd(
+        rutaCoordenadas: points, distancia: distance, duracion: duration));
+    BlocProvider.of<SearchBloc>(context).add(OnDesActivarMarcadorManual());
+    Navigator.of(context).pop();
   }
 }

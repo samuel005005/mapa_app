@@ -18,3 +18,11 @@ class OnMoveMap extends MapaEvent {
   final LatLng centroMapa;
   OnMoveMap(this.centroMapa);
 }
+
+class OnCreateRouteBeginEnd extends MapaEvent {
+  final List<LatLng> rutaCoordenadas;
+  final double distancia;
+  final double duracion;
+
+  OnCreateRouteBeginEnd({this.rutaCoordenadas, this.distancia, this.duracion});
+}

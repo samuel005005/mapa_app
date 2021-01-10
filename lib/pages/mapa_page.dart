@@ -55,15 +55,20 @@ class _MapaPageState extends State<MapaPage> {
 
     final cameraPosition =
         new CameraPosition(target: state.ubicacion, zoom: 15);
-    return GoogleMap(
-      initialCameraPosition: cameraPosition,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      zoomControlsEnabled: false,
-      onMapCreated: context.read<MapaBloc>().initMap,
-      polylines: context.read<MapaBloc>().state.polylines.values.toSet(),
-      onCameraMove: (CameraPosition cameraPosition) {
-        context.read<MapaBloc>().add(OnMoveMap(cameraPosition.target));
+
+    return BlocBuilder<MapaBloc, MapaState>(
+      builder: (_, state) {
+        return GoogleMap(
+          initialCameraPosition: cameraPosition,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: false,
+          onMapCreated: context.read<MapaBloc>().initMap,
+          polylines: state.polylines.values.toSet(),
+          onCameraMove: (CameraPosition cameraPosition) {
+            context.read<MapaBloc>().add(OnMoveMap(cameraPosition.target));
+          },
+        );
       },
     );
   }
