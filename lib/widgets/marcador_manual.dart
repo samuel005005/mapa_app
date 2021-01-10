@@ -83,6 +83,9 @@ class _BuildMardadorManual extends StatelessWidget {
     final trafficService = new TrafficService();
     final begin = context.read<MiUbicacionBloc>().state.ubicacion;
     final end = context.read<MapaBloc>().state.ubicacionCentral;
+
+    //Obtener Informacion  Destino
+    await trafficService.getCoordInfo(end);
     final trafficResponse = await trafficService.getCoordsBeginEnd(begin, end);
     final geometry = trafficResponse.routes[0].geometry;
     final duration = trafficResponse.routes[0].duration;

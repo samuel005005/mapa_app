@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Colors, Offset;
 import 'package:bloc/bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
@@ -102,6 +102,28 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
 
     final currentPolylines = state.polylines;
     currentPolylines['miRutaDestino'] = this._miRutaDestino;
-    yield state.copyWith(polylines: currentPolylines);
+
+    // Marcadores
+    final markerBegin = new Marker(
+      markerId: MarkerId('Begin'),
+      position: event.rutaCoordenadas[0],
+      infoWindow: InfoWindow(
+        title: 'Mi Casa',
+        snippet: 'Este esa mi nueva casa',
+        anchor: Offset(0.0, 0.0),
+        onTap: () {
+          print('InfoWindow TAp');
+        },
+      ),
+    );
+    // Marcadores
+    final markerEnd = new Marker(
+      markerId: MarkerId('End'),
+      position: event.rutaCoordenadas[event.rutaCoordenadas.length - 1],
+    );
+    final newMarkers = {...state.markers};
+    newMarkers['Begin'] = markerBegin;
+    newMarkers['End'] = markerEnd;
+    yield state.copyWith(markers: newMarkers);
   }
 }

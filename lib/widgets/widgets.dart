@@ -2,7 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mapa_app/models/search_reponse.dart';
+
 import 'package:polyline/polyline.dart' as Poly;
 
 import 'package:mapa_app/helpers/helpers.dart';
