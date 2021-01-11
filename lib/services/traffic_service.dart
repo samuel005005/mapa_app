@@ -57,9 +57,8 @@ class TrafficService {
         'proximity': '${proximidad.longitude},${proximidad.latitude}',
         'language': 'es'
       });
-
-      final data = searchResponseFromJson(resp.data);
-      return data;
+      final data = resp.data;
+      return searchResponseFromJson(data);
     } catch (e) {
       return SearchResponse(features: []);
     }

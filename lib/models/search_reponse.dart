@@ -25,8 +25,10 @@ class SearchResponse {
   factory SearchResponse.fromJson(Map<String, dynamic> json) => SearchResponse(
         type: json["type"],
         query: List<String>.from(json["query"].map((x) => x)),
-        features: List<Feature>.from(
-            json["features"].map((x) => Feature.fromJson(x))),
+        features: List<Feature>.from(json["features"].map((x) {
+          print(x);
+          return Feature.fromJson(x);
+        })),
         attribution: json["attribution"],
       );
 
@@ -97,8 +99,6 @@ class Feature {
             : List<double>.from(json["bbox"].map((x) => x.toDouble())),
         center: List<double>.from(json["center"].map((x) => x.toDouble())),
         geometry: Geometry.fromJson(json["geometry"]),
-        context:
-            List<Context>.from(json["context"].map((x) => Context.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
