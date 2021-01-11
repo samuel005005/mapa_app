@@ -85,11 +85,15 @@ class _BuildMardadorManual extends StatelessWidget {
     final end = context.read<MapaBloc>().state.ubicacionCentral;
 
     //Obtener Informacion  Destino
-    await trafficService.getCoordInfo(end);
+    final reverseQueryResponse = await trafficService.getCoordInfo(end);
+
     final trafficResponse = await trafficService.getCoordsBeginEnd(begin, end);
     final geometry = trafficResponse.routes[0].geometry;
     final duration = trafficResponse.routes[0].duration;
     final distance = trafficResponse.routes[0].distance;
+
+    final featureDestino = reverseQueryResponse.features[0];
+    final nombreDestino = featureDestino.textEs;
     //Decodifcar los puntos geometries polyline6
     final List<LatLng> points =
         Poly.Polyline.Decode(encodedString: geometry, precision: 6)
@@ -98,9 +102,22 @@ class _BuildMardadorManual extends StatelessWidget {
       return LatLng(point[0], point[1]);
     }).toList();
 
-    context.read<MapaBloc>().add(OnCreateRouteBeginEnd(
-        rutaCoordenadas: points, distancia: distance, duracion: duration));
+    context.read<MapaBloc>().add(
+          OnCreateRouteBeginEnd(
+              rutaCoordenadas: points,
+              distancia: distance,
+              duracion: duration,
+              nombreDestino: nombreDestino),
+        );
+
     BlocProvider.of<SearchBloc>(context).add(OnDesActivarMarcadorManual());
+
     Navigator.of(context).pop();
+
+    BlocProvider.of<SearchBloc>(context).add(OnAddHistory(SearchResult(
+        canceled: false,
+        manualUbication: true,
+        nombreDestino: nombreDestino,
+        description: featureDestino.placeNameEs)));
   }
 }

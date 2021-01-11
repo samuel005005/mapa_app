@@ -4,10 +4,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart' show Colors, Offset;
 import 'package:bloc/bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:meta/meta.dart';
 
 import 'package:mapa_app/themes/uber_map_theme.dart';
 
+import 'package:mapa_app/helpers/helpers.dart' as helpers;
 part 'mapa_event.dart';
 part 'mapa_state.dart';
 
@@ -103,27 +105,48 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
     final currentPolylines = state.polylines;
     currentPolylines['miRutaDestino'] = this._miRutaDestino;
 
+    // Icono inicio
+    final iconBegin = await helpers.getMarketBeginIcon(event.duracion.toInt());
+    // final iconBegin = await helpers.getAssetImageMarker();
+    // final iconEnd = await helpers.getNetworkImageMarker();
+    final iconEnd =
+        await helpers.getMarketEndIcon(event.nombreDestino, event.distancia);
     // Marcadores
     final markerBegin = new Marker(
-      markerId: MarkerId('Begin'),
+      markerId: MarkerId('begin'),
+      icon: iconBegin,
       position: event.rutaCoordenadas[0],
-      infoWindow: InfoWindow(
-        title: 'Mi Casa',
-        snippet: 'Este esa mi nueva casa',
-        anchor: Offset(0.0, 0.0),
-        onTap: () {
-          print('InfoWindow TAp');
-        },
-      ),
+      anchor: Offset(0.0, 1.0),
+      // infoWindow: InfoWindow(
+      //   title: 'Mi Ubicacion',
+      //   snippet: 'Duracion recorrido: ${(event.duracion / 60).floor()} minutos',
+      // ),
     );
+
+    // double kilometros = event.distancia / 100;
+    // kilometros = (kilometros * 10).floor().toDouble();
+    // kilometros = kilometros / 100;
     // Marcadores
     final markerEnd = new Marker(
-      markerId: MarkerId('End'),
+      markerId: MarkerId('end'),
+      icon: iconEnd,
+      anchor: Offset(0.1, 0.90),
       position: event.rutaCoordenadas[event.rutaCoordenadas.length - 1],
+      // infoWindow: InfoWindow(
+      //   title: event.nombreDestino,
+      //   snippet: 'Distancia kilometro: $kilometros Km',
+      // ),
     );
+
     final newMarkers = {...state.markers};
-    newMarkers['Begin'] = markerBegin;
-    newMarkers['End'] = markerEnd;
+
+    newMarkers['begin'] = markerBegin;
+    newMarkers['end'] = markerEnd;
+
+    Future.delayed(Duration(milliseconds: 300)).then((value) {
+      // _mapController.showMarkerInfoWindow(MarkerId('end'));
+    });
+
     yield state.copyWith(markers: newMarkers);
   }
 }

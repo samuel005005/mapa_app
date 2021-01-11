@@ -1,4 +1,4 @@
-import 'dart:async';
+part of 'helpers.dart';
 
 class Debouncer<T> {
   final Duration duration;

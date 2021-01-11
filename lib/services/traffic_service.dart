@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
-import 'package:mapa_app/helpers/debouncer.dart';
+import 'package:mapa_app/helpers/helpers.dart';
+
 import 'package:mapa_app/models/reverse_query_response.dart';
 import 'package:mapa_app/models/search_reponse.dart';
 import 'package:mapa_app/models/traffic_response.dart';
@@ -49,7 +50,6 @@ class TrafficService {
   Future<SearchResponse> getResultsByQuery(
       String search, LatLng proximidad) async {
     try {
-      print('Buscando....');
       final url = '${this._baseUrl}/geocoding/v5/mapbox.places/$search.json';
       final resp = await this._dio.get(url, queryParameters: {
         'access_token': this._apiKey,
@@ -79,9 +79,8 @@ class TrafficService {
     Future.delayed(Duration(milliseconds: 201)).then((_) => timer.cancel());
   }
 
-  Future getCoordInfo(LatLng coords) async {
+  Future<ReverseQueryResponse> getCoordInfo(LatLng coords) async {
     try {
-      print('Buscando....');
       final url =
           '${this._baseUrl}/geocoding/v5/mapbox.places/${coords.longitude},${coords.latitude}.json';
       final resp = await this._dio.get(url,
@@ -91,7 +90,7 @@ class TrafficService {
 
       return data;
     } catch (e) {
-      return SearchResponse(features: []);
+      return ReverseQueryResponse(features: []);
     }
   }
 

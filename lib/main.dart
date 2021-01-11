@@ -6,6 +6,7 @@ import 'package:mapa_app/bloc/search/search_bloc.dart';
 import 'package:mapa_app/pages/acceso_gps_page.dart';
 import 'package:mapa_app/pages/loading_page.dart';
 import 'package:mapa_app/pages/mapa_page.dart';
+import 'package:mapa_app/pages/test_market_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Material App',
         debugShowCheckedModeBanner: false,
-        home: LoadingPage(),
+        // home: TestMarketPage(),
         initialRoute: LoadingPage.routeName,
         routes: {
           MapaPage.routeName: (_) => MapaPage(),

@@ -80,7 +80,10 @@ class SearchBar extends StatelessWidget {
     }).toList();
 
     context.read<MapaBloc>().add(OnCreateRouteBeginEnd(
-        rutaCoordenadas: points, distancia: distance, duracion: duration));
+        rutaCoordenadas: points,
+        distancia: distance,
+        duracion: duration,
+        nombreDestino: result.nombreDestino));
 
     Navigator.of(context).pop();
 
